@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Seguro de Vida a Término</title>
+<style>
+:root{
+  --blue:#1264a3;
+  --blue2:#0b4f87;
+  --sky:#eaf4fb;
+  --sky2:#f5f9fc;
+  --gray:#5f6b76;
+  --gray2:#8b98a5;
+  --line:#dbe4eb;
+  --text:#17222d;
+  --white:#fff;
+  --shadow:0 14px 40px rgba(21,56,83,.10);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:linear-gradient(180deg,#f5f9fc 0%,#eef4f8 100%);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:0 auto;padding:24px}
+.topbar{
+  background:var(--white); border:1px solid var(--line); border-radius:22px;
+  padding:18px 22px; display:flex; align-items:center; justify-content:space-between;
+  box-shadow:var(--shadow); position:sticky;top:12px;z-index:5;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:44px;height:44px;border-radius:13px;background:linear-gradient(145deg,var(--blue),var(--blue2));
+  display:grid;place-items:center;color:#fff;font-weight:900;letter-spacing:-1px;
+}
+.brand b{font-size:17px;letter-spacing:.4px}
+.brand span{display:block;color:var(--gray2);font-size:11px;margin-top:2px}
+.header-actions{display:flex;gap:10px}
+.btn{
+  border:0;border-radius:12px;padding:12px 17px;font-weight:750;transition:.18s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn.secondary{background:var(--sky);color:var(--blue2)}
+.btn.primary{background:var(--blue);color:#fff;box-shadow:0 8px 20px rgba(18,100,163,.22)}
+.hero{padding:42px 8px 24px;text-align:center}
+.hero .eyebrow{color:var(--blue);font-size:12px;font-weight:850;letter-spacing:1.5px;text-transform:uppercase}
+.hero h1{font-size:clamp(29px,5vw,46px);line-height:1.06;margin:9px auto 12px;max-width:800px;letter-spacing:-1.4px}
+.hero p{color:var(--gray);max-width:690px;margin:0 auto;font-size:15px;line-height:1.6}
+.grid{display:grid;grid-template-columns:1.03fr .97fr;gap:18px;align-items:start}
+.card{
+  background:#fff;border:1px solid var(--line);border-radius:22px;padding:23px;
+  box-shadow:var(--shadow);
+}
+.card h2{font-size:17px;margin:0 0 20px;letter-spacing:-.2px}
+.section-label{
+  display:flex;justify-content:space-between;align-items:end;margin:22px 0 10px;
+}
+.section-label:first-of-type{margin-top:0}
+.section-label label{font-size:13px;font-weight:800;color:#30404d}
+.value{
+  font-size:20px;font-weight:900;color:var(--blue2);
+  background:var(--sky);padding:8px 12px;border-radius:11px;
+}
+input[type=number]{
+  width:100%;border:1px solid var(--line);border-radius:13px;padding:13px 14px;
+  outline:none;color:var(--text);background:#fbfdff;font-weight:700;
+}
+input[type=number]:focus,select:focus{border-color:#83b9dc;box-shadow:0 0 0 4px rgba(18,100,163,.08)}
+.range-wrap{padding:4px 2px 0}
+input[type=range]{width:100%;accent-color:var(--blue);height:6px}
+.range-minmax{display:flex;justify-content:space-between;color:var(--gray2);font-size:11px;margin-top:7px}
+.choices{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.choice{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 6px;
+  text-align:center;color:#45525e;font-weight:800;font-size:12px;
+}
+.choice.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 7px 16px rgba(18,100,163,.18)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{display:block;font-size:12px;color:var(--gray);font-weight:750;margin:0 0 7px}
+select{
+ width:100%;padding:13px 12px;border-radius:13px;border:1px solid var(--line);
+ background:#fbfdff;color:var(--text);font-weight:700;outline:none;
+}
+.note{font-size:11px;color:var(--gray2);line-height:1.5;margin-top:12px}
+.result{
+  background:linear-gradient(145deg,#0c4e83,#1264a3);color:#fff;border-radius:18px;padding:21px;
+  position:relative;overflow:hidden;
+}
+.result:after{content:"";position:absolute;width:190px;height:190px;border:34px solid rgba(255,255,255,.07);border-radius:50%;right:-70px;top:-80px}
+.result .small{font-size:11px;opacity:.78;letter-spacing:.6px;text-transform:uppercase;font-weight:800}
+.premium{font-size:40px;line-height:1;margin:8px 0 4px;font-weight:950;letter-spacing:-1px}
+.premium span{font-size:14px;font-weight:700;opacity:.82}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}
+.metric{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.12);padding:12px;border-radius:12px}
+.metric small{display:block;opacity:.72;font-size:10px}
+.metric b{display:block;margin-top:3px;font-size:16px}
+.cta{margin-top:14px;width:100%;background:#fff;color:var(--blue2);font-weight:900;padding:14px;border-radius:13px;border:0}
+.subgrid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
+.chart-card{min-height:330px}
+.chart-wrap{height:230px;margin-top:8px}
+svg{width:100%;height:100%;overflow:visible}
+.chart-label{font-size:11px;fill:#73808c}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray2)}
+td b{color:var(--blue2)}
+tr.selected{background:var(--sky)}
+.country{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--sky2);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-top:14px
+}
+.country label{font-size:12px;font-weight:800;color:var(--gray)}
+.country select{width:auto;min-width:145px;background:#fff;padding:9px 11px}
+.disclaimer{
+  margin-top:18px;padding:13px 15px;border-radius:14px;background:#f2f5f7;border:1px solid #e1e7ec;
+  color:#68747f;font-size:11px;line-height:1.55
+}
+.footer{text-align:center;color:#89949e;font-size:11px;padding:22px 0 10px}
+.modal{position:fixed;inset:0;background:rgba(14,27,39,.46);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+.modal.open{display:flex}
+.modal-box{background:#fff;border-radius:20px;max-width:470px;width:100%;padding:24px;box-shadow:0 25px 70px rgba(0,0,0,.22)}
+.modal-box h3{margin:0 0 8px}
+.modal-box p{color:var(--gray);font-size:13px;line-height:1.55}
+.modal-actions{display:grid;gap:10px;margin-top:18px}
+.wa{padding:14px;border:0;border-radius:12px;background:#eef7f2;color:#176a42;font-weight:850;text-align:left}
+.close{background:#eef2f5;color:#53616d}
+@media(max-width:820px){
+ .app{padding:12px}.topbar{position:static}.header-actions .secondary{display:none}
+ .grid{grid-template-columns:1fr}.hero{text-align:left;padding:34px 5px 20px}.hero p{margin:0}
+ .choices{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}
+ .premium{font-size:34px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">+</div>
+      <div><b>Protección de Vida</b><span>Calculadora de seguro a término</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn secondary" onclick="scrollToCalculator()">Calcular cotización</button>
+      <button class="btn primary" onclick="openModal()">Solicitar cotización</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Protección financiera para tu familia</div>
+    <h1>Calcula tu protección de vida en pocos pasos</h1>
+    <p>Personaliza la suma asegurada, el plazo y algunos factores de perfil para obtener una referencia estimada de prima mensual y anual.</p>
+  </section>
+
+  <main id="calculator" class="grid">
+    <section class="card">
+      <h2>1. Configura tu seguro</h2>
+
+      <div class="section-label">
+        <label>Edad del asegurado</label><span class="value" id="ageValue">35 años</span>
+      </div>
+      <input id="age" type="number" min="18" max="75" value="35" oninput="syncAgeFromInput()">
+      <div class="range-wrap">
+        <input id="ageRange" type="range" min="18" max="75" value="35" oninput="syncAge(this.value)">
+        <div class="range-minmax"><span>18 años</span><span>75 años</span></div>
+      </div>
+
+      <div class="section-label">
+        <label>Suma asegurada</label><span class="value" id="sumValue">$500,000 USD</span>
+      </div>
+      <div class="range-wrap">
+        <input id="sumRange" type="range" min="100000" max="5000000" step="25000" value="500000" oninput="syncSum(this.value)">
+        <div class="range-minmax"><span>$100,000</span><span>$5,000,000</span></div>
+      </div>
+
+      <div class="section-label"><label>Elige una suma rápida</label></div>
+      <div class="choices" id="sumChoices">
+        <button class="choice" data-sum="100000">$100K</button>
+        <button class="choice" data-sum="250000">$250K</button>
+        <button class="choice active" data-sum="500000">$500K</button>
+        <button class="choice" data-sum="1000000">$1M</button>
+      </div>
+
+      <div class="section-label"><label>Plazo de protección</label><span class="value" id="termValue">15 años</span></div>
+      <div class="choices" id="termChoices">
+        <button class="choice" data-term="10">10 años</button>
+        <button class="choice active" data-term="15">15 años</button>
+        <button class="choice" data-term="20">20 años</button>
+        <button class="choice" data-term="30">30 años</button>
+      </div>
+
+      <div class="section-label"><label>Factores complementarios</label></div>
+      <div class="two">
+        <div class="field">
+          <label>Consumo de tabaco</label>
+          <select id="smoking" onchange="calculate()">
+            <option value="no">No fumador</option>
+            <option value="yes">Fumador</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Estado de salud</label>
+          <select id="health" onchange="calculate()">
+            <option value="preferred">Preferente</option>
+            <option value="standard" selected>Estándar</option>
+            <option value="controlled">Condición controlada</option>
+            <option value="complex">Mayor complejidad</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="country">
+        <label>País para solicitar la cotización</label>
+        <select id="country">
+          <option value="PE">Perú</option>
+          <option value="EC">Ecuador</option>
+        </select>
+      </div>
+
+      <div class="note">La edad, el plazo y el perfil seleccionado se utilizan únicamente para generar una referencia ilustrativa.</div>
+    </section>
+
+    <section class="card">
+      <h2>2. Resultado estimado</h2>
+      <div class="result">
+        <div class="small">Prima mensual aproximada</div>
+        <div class="premium" id="monthly">$0 <span>USD / mes</span></div>
+        <div class="small">Prima anual aproximada</div>
+        <div class="result-grid">
+          <div class="metric"><small>Prima anual</small><b id="annual">$0</b></div>
+          <div class="metric"><small>Protección</small><b id="coverage">$500,000</b></div>
+          <div class="metric"><small>Plazo</small><b id="termMetric">15 años</b></div>
+          <div class="metric"><small>Costo total estimado</small><b id="total">$0</b></div>
+        </div>
+        <button class="cta" onclick="openModal()">Quiero recibir mi cotización →</button>
+      </div>
+
+      <div class="disclaimer">
+        <b>Disclaimer:</b> Los valores del resultado son aproximados y tienen carácter exclusivamente ilustrativo. La prima final, aceptación, condiciones, exclusiones y beneficios dependen de la compañía aseguradora, edad, declaración de salud, hábitos, evaluación de riesgo, plazo y demás criterios de suscripción.
+      </div>
+    </section>
+  </main>
+
+  <section class="subgrid">
+    <section class="card chart-card">
+      <h2>Proyección de protección</h2>
+      <div class="chart-wrap">
+        <svg id="chart" viewBox="0 0 720 230" preserveAspectRatio="none" aria-label="Gráfico de protección proyectada"></svg>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Comparativo por plazo</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Plazo</th><th>Prima mensual</th><th>Prima anual</th><th>Total del plazo</th></tr></thead>
+          <tbody id="comparison"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <div class="footer">Calculadora orientativa de seguro de vida a término · USD</div>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <h3>Solicita tu cotización</h3>
+    <p>Selecciona el país. Se abrirá WhatsApp con un mensaje preparado con los datos de tu cálculo.</p>
+    <div class="modal-actions">
+      <button class="wa" onclick="sendWhatsApp('PE')">🇵🇪 Perú · +51 989 150 741</button>
+      <button class="wa" onclick="sendWhatsApp('EC')">🇪🇨 Ecuador · +593 987 449 908</button>
+      <button class="btn close" onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const state={age:35,sum:500000,term:15};
+const money = n => new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
+
+function syncAge(v){state.age=Math.max(18,Math.min(75,Number(v)||35));document.getElementById('age').value=state.age;document.getElementById('ageRange').value=state.age;document.getElementById('ageValue').textContent=state.age+' años';calculate();}
+function syncAgeFromInput(){syncAge(document.getElementById('age').value)}
+function syncSum(v){state.sum=Number(v);document.getElementById('sumRange').value=state.sum;document.getElementById('sumValue').textContent=money(state.sum)+' USD';setQuick('sum',state.sum);calculate();}
+function setQuick(type,val){
+  document.querySelectorAll(type==='sum'?'#sumChoices .choice':'#termChoices .choice').forEach(b=>{
+    b.classList.toggle('active',Number(b.dataset[type])===Number(val));
+  });
+}
+document.querySelectorAll('#sumChoices .choice').forEach(b=>b.onclick=()=>syncSum(b.dataset.sum));
+document.querySelectorAll('#termChoices .choice').forEach(b=>b.onclick=()=>{
+  state.term=Number(b.dataset.term);
+  document.getElementById('termValue').textContent=state.term+' años';
+  setQuick('term',state.term);calculate();
+});
+
+function rateFor(age,term,smoking,health){
+  const baseRatePerThousand = 0.85 * Math.exp((age - 25) / 21);
+  const termFactor = ({10: 0.92, 15: 1.08, 20: 1.35, 30: 1.85})[term] || 1.0;
+  const smokeFactor = smoking === 'yes' ? 2.10 : 1.0;
+  const healthFactor = ({preferred: 0.85, standard: 1.0, controlled: 1.30, complex: 1.75})[health] || 1.0;
+  return (baseRatePerThousand / 1000) * termFactor * smokeFactor * healthFactor;
+}
+function annualPremium(term){
+  const smoking=document.getElementById('smoking').value, health=document.getElementById('health').value;
+  const purePremium = state.sum * rateFor(state.age, term, smoking, health);
+  const policyFee = 85;
+  return purePremium + policyFee;
+}
+function calculate(){
+  const annual=annualPremium(state.term);
+  const monthly=(annual * 1.04) / 12;
+  document.getElementById('monthly').innerHTML=money(monthly)+' <span>USD / mes</span>';
+  document.getElementById('annual').textContent=money(annual);
+  document.getElementById('coverage').textContent=money(state.sum);
+  document.getElementById('termMetric').textContent=state.term+' años';
+  document.getElementById('total').textContent=money(annual*state.term);
+  document.getElementById('termValue').textContent=state.term+' años';
+  drawChart();
+  drawComparison();
+}
+function drawChart(){
+  const svg=document.getElementById('chart');
+  const W=720,H=230,L=62,R=18,T=15,B=35;
+  const iw=W-L-R, ih=H-T-B;
+  const maxY=state.sum;
+  const term=state.term;
+  const pts=[];
+  for(let i=0;i<=20;i++){
+    const x=i/20*term, y=state.sum;
+    pts.push([L+(x/term)*iw,T+(1-y/maxY)*ih]);
+  }
+  const baseY=T+ih;
+  let s=`<line x1="${L}" y1="${baseY}" x2="${W-R}" y2="${baseY}" stroke="#dbe4eb"/>
+          <line x1="${L}" y1="${T}" x2="${L}" y2="${baseY}" stroke="#dbe4eb"/>
+          <text x="${L-8}" y="${T+5}" text-anchor="end" class="chart-label">${money(maxY)}</text>
+          <text x="${L-8}" y="${baseY+4}" text-anchor="end" class="chart-label">$0</text>`;
+  const points=pts.map(p=>p.join(',')).join(' ');
+  s+=`<polygon points="${L},${baseY} ${points} ${W-R},${baseY}" fill="#eaf4fb"/>
+      <polyline points="${points}" fill="none" stroke="#1264a3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  [0,.25,.5,.75,1].forEach(q=>{
+    const x=L+iw*q;
+    s+=`<line x1="${x}" y1="${baseY}" x2="${x}" y2="${baseY+5}" stroke="#aebbc6"/>
+      <text x="${x}" y="${baseY+21}" text-anchor="middle" class="chart-label">${Math.round(term*q)} años</text>`;
+  });
+  s+=`<circle cx="${L+iw}" cy="${T}" r="5" fill="#1264a3"/>
+       <text x="${W-R}" y="${T-2}" text-anchor="end" class="chart-label">Fin del plazo</text>`;
+  svg.innerHTML=s;
+}
+function drawComparison(){
+  const tbody=document.getElementById('comparison');tbody.innerHTML='';
+  [10,15,20,30].forEach(t=>{
+    const a=annualPremium(t), disabled=(state.age+t>85);
+    const m=(a*1.04)/12;
+    const tr=document.createElement('tr');
+    if(t===state.term)tr.className='selected';
+    tr.innerHTML=disabled
+      ? `<td><b>${t} años</b></td><td colspan="3">No disponible para esta edad en este modelo</td>`
+      : `<td><b>${t} años</b></td><td>${money(m)}</td><td>${money(a)}</td><td>${money(a*t)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function scrollToCalculator(){document.getElementById('calculator').scrollIntoView({behavior:'smooth'})}
+function openModal(){document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function sendWhatsApp(country){
+  const numbers={PE:'51989150741',EC:'593987449908'};
+  const label=country==='PE'?'Perú':'Ecuador';
+  const msg=`Hola, quisiera solicitar una cotización de seguro de vida a término. País: ${label}. Edad: ${state.age} años. Suma asegurada: ${money(state.sum)} USD. Plazo: ${state.term} años. Tabaquismo: ${document.getElementById('smoking').selectedOptions[0].text}. Estado de salud: ${document.getElementById('health').selectedOptions[0].text}. Prima mensual aproximada: ${money((annualPremium(state.term)*1.04)/12)}.`;
+  window.open('https://wa.me/'+numbers[country]+'?text='+encodeURIComponent(msg),'_blank');
+}
+calculate();
+</script>
+</body>
+</html>
